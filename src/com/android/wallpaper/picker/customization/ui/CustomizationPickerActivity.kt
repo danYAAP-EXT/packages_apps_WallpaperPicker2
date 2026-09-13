@@ -22,12 +22,14 @@ import android.app.ComponentCaller
 import android.content.Intent
 import android.content.pm.ActivityInfo
 import android.content.res.Configuration
+import android.graphics.Color
 import android.os.Bundle
 import android.util.Log
 import android.widget.FrameLayout
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.WindowCompat
+import androidx.core.view.WindowInsetsControllerCompat
 import androidx.fragment.app.FragmentManager
 import com.android.customization.picker.clock.ui.view.ClockViewFactory
 import com.android.wallpaper.R
@@ -133,6 +135,7 @@ class CustomizationPickerActivity :
 
         setContentView(R.layout.activity_cusomization_picker2)
         WindowCompat.setDecorFitsSystemWindows(window, ActivityUtils.isSUWMode(this))
+        updateStatusBarAppearance()
 
         ColorUpdateBinder.bind(
             setColor = { color ->
@@ -211,6 +214,7 @@ class CustomizationPickerActivity :
             val isScreenSizeChange = diff and ActivityInfo.CONFIG_SCREEN_SIZE != 0
 
             if (isUiModeChange) {
+                updateStatusBarAppearance()
                 colorUpdateViewModel.updateDarkModeAndColors()
             } else if (isAssetsPathsChange) {
                 colorUpdateViewModel.updateColors()
@@ -288,6 +292,12 @@ class CustomizationPickerActivity :
                     .commit()
             }
         }
+    }
+
+    private fun updateStatusBarAppearance() {
+        window.statusBarColor = Color.TRANSPARENT
+        WindowInsetsControllerCompat(window, window.decorView).isAppearanceLightStatusBars =
+            !resources.configuration.isNightModeActive
     }
 
     private fun enforcePortraitForHandheldAndFoldedDisplay() {
